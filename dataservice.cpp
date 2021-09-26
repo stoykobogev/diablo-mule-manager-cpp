@@ -12,11 +12,28 @@ string DataService::MULES_FILE = DataService::DIR + "/mules.json";
 string DataService::ITEMS_FILE = DataService::DIR + "/items.json";
 
 void DataService::saveMules() {
+    sort(DataService::MULES.begin(), DataService::MULES.end(), muleComparator);
+
     ofstream os(DataService::MULES_FILE);
 
     json j = DataService::muleVectorToJson(DataService::MULES);
     os << j;
 
+    os.close();
+}
+
+void DataService::saveItems() {
+    sort(DataService::ITEMS.begin(), DataService::ITEMS.end(), itemComparator);
+
+    json j = json::array({});
+
+    for (int i = 0; i < DataService::ITEMS.size(); i++) {
+        Item item = DataService::ITEMS.at(i);
+        j[i] = json({ {"id", item.id }, {"name", item.name} });
+    }
+
+    ofstream os(DataService::ITEMS_FILE);
+    os << j;
     os.close();
 }
 
@@ -69,9 +86,7 @@ vector<Mule> DataService::initializeMules() {
         mules = DataService::muleVectorFromJson(muleJson);
     }
 
-    sort(mules.begin(), mules.end(), [](Mule m1, Mule m2) {
-        return m1.name.compare(m2.name) == -1;
-    });
+    sort(mules.begin(), mules.end(), muleComparator);
 
     return mules;
 }
@@ -106,9 +121,7 @@ vector<Item> DataService::initializeItems() {
         }
     }
 
-    sort(items.begin(), items.end(), [](Item i1, Item i2) {
-        return i1.name.compare(i2.name) == -1;
-    });
+    sort(items.begin(), items.end(), itemComparator);
 
     return items;
 }
@@ -136,6 +149,8 @@ Mule DataService::muleFromJson(json& muleJson) {
 
 json DataService::itemVectorToJson(vector<MuleItem>& items)
 {
+    sort(items.begin(), items.end(), itemComparator);
+
     json j = json::array({});
 
     for (size_t i = 0; i < items.size(); i++)
@@ -166,6 +181,8 @@ vector<MuleItem> DataService::itemVectorFromJson(json& j)
         muleItems.push_back(muleItem);
     }
 
+    sort(muleItems.begin(), muleItems.end(), itemComparator);
+
     return muleItems;
 }
 
@@ -180,6 +197,7 @@ json DataService::muleVectorToJson(vector<Mule>& mules)
 
     return j;
 }
+
 vector<Mule> DataService::muleVectorFromJson(json& j)
 {
     vector<Mule> mules;
@@ -188,7 +206,17 @@ vector<Mule> DataService::muleVectorFromJson(json& j)
         mules.push_back(mule);
     }
 
+    sort(mules.begin(), mules.end(), muleComparator);
+
     return mules;
+}
+
+bool DataService::itemComparator(Item &i1, Item &i2) {
+    return i1.name.compare(i2.name) == -1;
+}
+
+bool DataService::muleComparator(Mule &m1, Mule &m2) {
+    return m1.name.compare(m2.name) == -1;
 }
 
 vector<Item> DataService::ITEMS = DataService::initializeItems();

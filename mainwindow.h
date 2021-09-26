@@ -55,5 +55,8 @@ private:
     void closeSaveItems();
     void saveMules();
     void closeSaveMules();
+
+    static bool icompare_pred(unsigned char a, unsigned char b);
+    static bool icompare(std::string const& a, std::string const& b);
 };
 #endif // MAINWINDOW_H

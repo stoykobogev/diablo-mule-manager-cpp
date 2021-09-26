@@ -119,6 +119,7 @@ void MainWindow::initializeView(vector<Mule> &mules) {
 
     // Item table
     ui->muleItemViewTableWidget->clear();
+    ui->muleItemViewTableWidget->model()->removeRows(0, ui->muleItemViewTableWidget->rowCount());
 
     QTableWidgetItem *column1 = new QTableWidgetItem();
     column1->setText(QString::fromUtf8("Name"));
@@ -342,16 +343,7 @@ void MainWindow::on_saveItemsButton_clicked()
 }
 
 void MainWindow::saveItems() {
-    json j = json::array({});
-
-    for (int i = 0; i < DataService::ITEMS.size(); i++) {
-        Item item = DataService::ITEMS.at(i);
-        j[i] = json({ {"id", item.id }, {"name", item.name} });
-    }
-
-    ofstream os(DataService::ITEMS_FILE);
-    os << j;
-    os.close();
+    DataService::saveItems();
 
     clearSelectedMule();
     clearEditItemFields();
@@ -443,15 +435,36 @@ void MainWindow::on_searchItemButton_clicked() {
     string itemName = ui->searchItemLineEdit->text().toStdString();
 
     for (auto&& mule_it = DataService::MULES.begin(); mule_it != DataService::MULES.end(); mule_it++) {
+        Mule mule;
         for (auto muleItem_it = mule_it->items.begin(); muleItem_it != mule_it->items.end(); muleItem_it++) {
-            if (muleItem_it->name == itemName) {
-                mules.push_back(*mule_it);
+            if (icompare(muleItem_it->name, itemName)) {
+                mule.items.push_back(*muleItem_it);
                 break;
             }
+        }
+
+        if (mule.items.size() > 0) {
+            mule.name = mule_it->name;
+            mules.push_back(mule);
         }
     }
 
     initializeView(mules);
+}
+
+bool MainWindow::icompare_pred(unsigned char a, unsigned char b)
+{
+    return std::tolower(a) == std::tolower(b);
+}
+
+bool MainWindow::icompare(std::string const& a, std::string const& b)
+{
+    auto it = std::search(
+        a.begin(), a.end(),
+        b.begin(), b.end(),
+        icompare_pred
+      );
+    return (it != a.end() );
 }
 
 void MainWindow::on_clearSearchItemButton_clicked() {

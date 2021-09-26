@@ -18,7 +18,9 @@ public:
     static string MULES_FILE;
     static string ITEMS_FILE;
 
-    static void saveMules();  
+    static void saveMules();
+    static void saveItems();
+
     static Mule* findMule(string name);
     static Item* findItem(string name);
 
@@ -39,6 +41,9 @@ private:
     static json muleToJson(Mule& mule);
     static json muleVectorToJson(vector<Mule>& mules);
     static vector<Mule> muleVectorFromJson(json& j);
+
+    static bool itemComparator(Item &i1, Item &i2);
+    static bool muleComparator(Mule &m1, Mule &m2);
 };
 
 #endif // DATASERVICE_H
