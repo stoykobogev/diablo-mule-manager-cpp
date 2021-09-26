@@ -1,7 +1,7 @@
 # Diablo Mule Manger
 Desktop app for managing mules in Diablo II: LoD
 
-Requirements:
+# Requirements
 Windows 10 64-bit
 
 # Guide
