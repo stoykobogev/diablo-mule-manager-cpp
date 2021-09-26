@@ -72,6 +72,7 @@ void MainWindow::initializeView(vector<Mule> &mules) {
     }
 
     ui->muleItemTreeView->reset();
+    ui->muleItemTreeView->setHeaderHidden(false);
 
     QStandardItem* headerItem = new QStandardItem("Mules");
     headerItem->setFont(font);

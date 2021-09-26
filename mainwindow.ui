@@ -72,7 +72,7 @@
         <bool>false</bool>
        </property>
        <attribute name="headerVisible">
-        <bool>false</bool>
+        <bool>true</bool>
        </attribute>
       </widget>
       <widget class="QTableWidget" name="muleItemViewTableWidget">
